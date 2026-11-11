@@ -2,7 +2,7 @@ const FPS = 30, END = 120 * FPS;
 const names = ['轮式机器人', '四足机器狗', '固定云台'];
 const roles = ['场外边线跟拍', '底线外低速跟拍', '高位全景'];
 const dogLane = {x:17.5, near:1.6, far:6.4};
-const colors = ['#39d8fb','#e5a4ff','#77f7aa'];
+const colors = ['#39d8fb','#e5a4ff','#77f7aa','#ffc376'];
 const phases = ['开球推进','半场传导','外线出手','篮板争抢','转换快攻','终场上篮'];
 const $ = id => document.getElementById(id);
 const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
@@ -75,7 +75,7 @@ function draw(canvas,state,index){
   const dot=(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0);
   const f=norm(aim.map((x,i)=>x-eye[i])), r=norm([-f[2],0,f[0]]);
   const up=[r[1]*f[2]-r[2]*f[1],r[2]*f[0]-r[0]*f[2],r[0]*f[1]-r[1]*f[0]];
-  const focal=w*(camera?0.79:1.04);
+  const focal=w*(camera?(camera.focal??0.79):1.04);
   function project(p){
     const d=p.map((x,i)=>x-eye[i]), z=dot(d,f);
     return z>0.3?[w/2+focal*dot(d,r)/z,h/2-focal*dot(d,up)/z,z]:null;
@@ -139,7 +139,7 @@ function draw(canvas,state,index){
       disc(hx,hy,k*.14,'#f0ba91');
     }else{
       const c=colors[e.i];ctx.lineWidth=k*.08;
-      if(e.i===2)segments([[px,0,pz],[px,e.c.y,pz]],c);
+      if(e.i>=2)segments([[px,0,pz],[px,e.c.y,pz]],c);
       else {
         ctx.fillStyle=c;ctx.fillRect(x-k*.45,hy+k*.16,k*.9,k*.29);
         for(const a of [-.32,.32]) {
@@ -148,7 +148,7 @@ function draw(canvas,state,index){
         }
       }
       ctx.fillStyle='#071324';ctx.fillRect(hx-k*.21,hy-k*.14,k*.42,k*.28);
-      ctx.fillStyle=c;ctx.font='bold '+Math.max(8,w/65)+'px system-ui';ctx.fillText('CAM 0'+(e.i+1),hx+5,hy-6);
+      ctx.fillStyle=c;ctx.font='bold '+Math.max(8,w/65)+'px system-ui';ctx.fillText(e.c.label??'CAM 0'+(e.i+1),hx+5,hy-6);
     }
   });
   if(camera){
@@ -157,6 +157,7 @@ function draw(canvas,state,index){
     if(camera.blocked){ctx.fillStyle='#0d1523bb';ctx.fillRect(w*.35,h*.23,w*.3,h*.65)}
   }
 }
+if (document.getElementById("scene")) {
 const previews=names.map((name,i)=>{
   const button=document.createElement('button');
   button.innerHTML='<canvas width="320" height="180"></canvas><span>0'+(i+1)+' · '+name+'</span>';
@@ -276,3 +277,4 @@ function tick(now){
   requestAnimationFrame(tick);
 }
 render();requestAnimationFrame(tick);
+}

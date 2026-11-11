@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>COURTSIDE · 赛事协同拍摄</title>
+<link rel="stylesheet" href="coordination.css">
+<script defer src="sim.js?v=coordination-1"></script>
+<script defer src="coordination.js?v=1"></script>
+</head>
+<body>
+<header class="mast">
+  <div><div class="brand">COURTSIDE <span>／</span> CAPTURE LAB</div><h1>赛事协同拍摄控制台</h1><p>从篮球赛事状态到四路机位的并行任务与接替</p></div>
+  <div class="mast-actions"><span class="badge">● 浏览器仿真</span><a href="index.html">原导播仿真 ↗</a></div>
+</header>
+<main>
+  <nav class="workflow" aria-label="处理流程">
+    <a href="#perception"><b>01</b><span>赛事感知<small>Event State</small></span></a>
+    <a href="#planning"><b>02</b><span>制播任务规划<small>Task Graph</small></span></a>
+    <a href="#execution"><b>03</b><span>多机位协同执行<small>Camera Agents</small></span></a>
+    <a href="#feedback"><b>04</b><span>执行反馈<small>Feedback</small></span></a>
+  </nav>
+  <div class="grid">
+    <section class="panel arena">
+      <div class="section-head"><div><span class="kicker">MATCH SIMULATION</span><h2 id="screenTitle">球馆总览</h2></div><button id="overviewButton">球馆总览</button></div>
+      <canvas id="arena" width="1000" height="560" aria-label="赛事或选中机位的仿真画面"></canvas>
+      <div class="transport"><button class="primary" id="run">▶ 播放</button><button id="restart">复位</button><label>倍速 <select id="rate"><option>1</option><option>2</option><option>4</option></select></label><output id="time"></output></div>
+      <input id="scrub" type="range" min="0" max="719" value="0" aria-label="仿真时间轴">
+      <div class="markers" id="markers"></div>
+    </section>
+    <div class="stack">
+      <section class="panel" id="perception">
+        <div class="section-head"><div><span class="kicker">EVENT STATE</span><h2>赛事感知</h2></div><span class="chip">仿真输入</span></div>
+        <div id="eventSummary"></div>
+        <details><summary>查看 Event State JSON</summary><pre id="eventJson"></pre></details>
+      </section>
+      <section class="panel" id="planning">
+        <div class="section-head"><div><span class="kicker">TASK GRAPH</span><h2>拍摄任务图</h2></div><span class="chip">模板模拟 LLM</span></div>
+        <p id="intent"></p><div id="tasks"></div>
+        <details><summary>查看 Task Graph JSON</summary><pre id="planJson"></pre></details>
+      </section>
+    </div>
+  </div>
+  <section class="panel" id="execution">
+    <div class="section-head"><div><span class="kicker">CAMERA AGENTS</span><h2>四机位执行监控</h2></div><small>点击任一机位查看大画面</small></div>
+    <div id="agents"></div>
+  </section>
+  <div class="grid lower">
+    <section class="panel" id="feedback">
+      <div class="section-head"><div><span class="kicker">FEEDBACK</span><h2>事件与接替记录</h2></div><button id="export">导出记录 JSON</button></div>
+      <ol id="records"></ol>
+    </section>
+    <section class="panel">
+      <div class="section-head"><div><span class="kicker">SCENARIO CONTROL</span><h2>故障注入</h2></div></div>
+      <p>在当前帧写入干预，可拖回时间轴复现。</p>
+      <div id="faults">
+        <label><input id="wheelLost" type="checkbox"> 边线轮式机位目标遮挡</label>
+        <label><input id="ptzDown" type="checkbox"> 篮下 PTZ 断流</label>
+        <label><input id="dogDown" type="checkbox"> 底线机器狗离线</label>
+        <label><input id="wideDown" type="checkbox"> 固定全景断流</label>
+      </div>
+      <button id="handoff">跳到接替案例</button>
+    </section>
+  </div>
+  <footer>演示数据由浏览器仿真生成。赛事感知使用仿真真值，任务规划使用模板，设备指令仅作用于虚拟机位。</footer>
+</main>
+</body></html>
