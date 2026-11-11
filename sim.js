@@ -44,7 +44,9 @@ function step(frame, prev, config) {
     const aim=quality>=config.threshold&&!offline?game.ball:old?.aim??[0,1,0];
     return {x:px,z:pz,y:[1.45,1.05,8][i],quality,blocked,offline,aim,velocity:travel*FPS};
   });
-  const priority=game.u>=0.72&&game.dir===1?[1,0,2]:[0,2,1];
+  const nearEndShot=game.u>=0.72&&game.dir===1;
+  const establishingShot=game.u<0.15;
+  const priority=nearEndShot?[1,0,2]:establishingShot?[2,0]:[0,2];
   const valid=i=>(i!==1||(game.dir>0&&game.u>=0.72))&&!cameras[i].offline&&!cameras[i].blocked&&cameras[i].quality>=config.threshold;
   const preferred=priority.find(valid)??-1;
   const active=prev&&prev.active>=0&&valid(prev.active)&&frame-prev.cut<45?prev.active:preferred;
